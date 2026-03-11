@@ -1,8 +1,8 @@
 import React from 'react';
 
 interface OnboardingFormProps {
-    onboardData: { userId?: string; text?: string; districts?: string[]; categories?: string[] };
-    setOnboardData: React.Dispatch<React.SetStateAction<{ userId?: string; text?: string; districts?: string[]; categories?: string[] }>>;
+    onboardData: { userId?: string; text?: string; districts?: string[]; categories?: string[]; openaiKey?: string };
+    setOnboardData: React.Dispatch<React.SetStateAction<{ userId?: string; text?: string; districts?: string[]; categories?: string[]; openaiKey?: string }>>;
     handleOnboardSubmit: (e: React.FormEvent) => void;
     availableCategories: string[];
     availableDistricts: string[];
@@ -46,6 +46,20 @@ export const OnboardingForm: React.FC<OnboardingFormProps> = ({ onboardData, set
                     fontSize: '1.1rem',
                     marginBottom: 'var(--space-lg)'
                 }}>Let's personalize your experience. Tell us a bit about what you're looking for in Zürich.</p>
+
+                <div style={{ marginBottom: 'var(--space-md)' }}>
+                    <label style={{ display: 'block', marginBottom: '8px', fontWeight: 600, color: 'var(--text-primary)' }}>OpenAI API Key (Required for Custom AI Prompts)</label>
+                    <input
+                        value={onboardData.openaiKey || ''}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => setOnboardData((prev: any) => ({ ...prev, openaiKey: e.target.value }))}
+                        placeholder="sk-..."
+                        style={{ width: '100%', fontFamily: 'monospace' }}
+                        type="password"
+                    />
+                    <div style={{ fontSize: '0.85rem', color: 'var(--text-tertiary)', marginTop: '4px' }}>
+                        Your key is stored locally in your browser and sent securely only to the local backend.
+                    </div>
+                </div>
 
                 <div style={{ marginBottom: 'var(--space-md)' }}>
                     <label style={{ display: 'block', marginBottom: '8px', fontWeight: 600, color: 'var(--text-primary)' }}>Participant ID (optional)</label>

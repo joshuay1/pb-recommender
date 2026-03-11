@@ -32,9 +32,10 @@ function saveCache() {
 loadCache();
 
 export async function getEmbedding(text: string): Promise<number[]> {
-  // Try same-origin proxy first, then fall back to a well-known local port where the
-  // minimal embedding proxy server usually runs (default: 8080).
-  const payload = { input: text };
+  const customKey = localStorage.getItem('pb_openai_key');
+  if (!customKey) {
+    throw new Error('Please enter your OpenAI API key in the Welcome screen to process recommendations.');
+  }
 
   // Normalize key
   const key = String(text).trim().toLowerCase();
@@ -42,31 +43,27 @@ export async function getEmbedding(text: string): Promise<number[]> {
     return embedCache.get(key)!;
   }
 
-  async function fetchUrl(url: string) {
-    const resp = await fetch(url, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
-    });
-    return resp;
-  }
-
-  // Primary: same-origin proxy path
   try {
-    let resp = await fetchUrl('/api/embeddings');
-    // If server responds 404, try fallback host where proxy commonly runs
-    if (resp.status === 404) {
-      resp = await fetchUrl('http://localhost:8080/api/embeddings');
-    }
+    const resp = await fetch('https://api.openai.com/v1/embeddings', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${customKey}`
+      },
+      body: JSON.stringify({
+        model: 'text-embedding-3-small',
+        input: text
+      })
+    });
 
     if (!resp.ok) {
-      const txt = await resp.text();
-      throw new Error(`Embedding proxy error: ${resp.status} ${txt}`);
+      const errorData = await resp.json().catch(() => ({}));
+      throw new Error(errorData.error?.message || `OpenAI error ${resp.status}`);
     }
 
     const data = await resp.json();
     if (!data || !data.data || !data.data[0] || !data.data[0].embedding) {
-      throw new Error('Invalid embedding response from proxy');
+      throw new Error('Invalid embedding response from OpenAI');
     }
     const emb = data.data[0].embedding as number[];
     // store in cache (simple FIFO trimming)
@@ -74,14 +71,14 @@ export async function getEmbedding(text: string): Promise<number[]> {
     if (embedCache.size > MAX_CACHE_ENTRIES) {
       // remove oldest
       const firstKey = embedCache.keys().next().value;
-      embedCache.delete(firstKey);
+      if (firstKey !== undefined) {
+        embedCache.delete(firstKey);
+      }
     }
     try { saveCache(); } catch (e) { /* ignore */ }
     return emb;
   } catch (err) {
-    // Provide a helpful error message including the fallback suggestion
-    const hint = 'Make sure the embedding proxy is running (server/index.js) and OPENAI_API_KEY is set. Try: OPENAI_API_KEY=sk... node server/index.js';
-    throw new Error(`${String(err)}\n${hint}`);
+    throw new Error(`Failed to fetch embeddings: ${err instanceof Error ? err.message : String(err)}`);
   }
 }
 

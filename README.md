@@ -1,70 +1,55 @@
-# Getting Started with Create React App
+# Wähli: A Deliberative Discovery Platform for Civic Tech
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Wähli is an experimental, AI-powered Participatory Budgeting (PB) platform designed to transform how citizens engage with public spending. 
 
-## Available Scripts
+Most digital democratic tools today treat participation as a simple transaction: voters log on, search for a project their friends or neighbors told them about, hit "approve," and leave. These popularity-based systems entrench existing preferences and shut down the very deliberation that makes direct democracy meaningful. The result is **participation without discovery**.
 
-In the project directory, you can run:
+Wähli fixes this by drawing inspiration from the smooth, frictionless discovery engines of e-commerce (like Netflix or Amazon), but instead of selling products, it empowers citizens to explore, reflect, and evaluate the trade-offs of their community's future. 
 
-### `npm start`
+## Core Innovations
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+Wähli believes digital democracy shouldn't guide people toward specific choices, but empower them to uncover their own priorities. It does this through three core pillars:
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+### 1. Steerable, Natural Language Discovery
+Instead of passive reliance on "what's popular," users have direct agency over their discovery process. You can steer the recommendation engine using natural language, for example, asking to see *"environmental projects in low-income areas."* The system immediately maps and surfaces matching proposals, expanding your attention span to ideas you might have otherwise overlooked.
 
-### `npm test`
+### 2. E-Commerce Style Frictionless Exploration
+Reviewing hundreds of civic PDFs is exhausting. Wähli acts as a **civic recommendation engine**. It learns your preferences through lightweight "More this vibe" (🌱) or "More around here" (📍) feedback. It transparently shows you *why* it recommended a project based on content and location, keeping you strictly in control of the algorithm's weights.
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+### 3. Gated Discovery & Structured Dissent (Majority Judgment)
+Disagreement is a vital democratic resource, yet most platforms only allow positive endorsements (ignoring valid concerns about equity or viability). Wähli uses a nuanced 4-tier rating system: *Terrible* (❌), *Neutral* (🤔), *Good* (👍), or *Love it* (❤️). 
 
-### `npm run build`
+Crucially, **negative voting is gated**. Structured negative feedback (rejection power) is only unlocked *after* a threshold of positive engagements. This curbs impulsive opposition and trolling, ensuring that when citizens voice a critique, it comes after a balanced assessment of pros and cons.
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+## The Democratic Goal
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+Participatory budgeting thrives when digital tools meet three requirements. Citizens must be able to:
+1. **Discover alternatives** beyond their preconceived interests.
+2. **Reflect on trade-offs** across different districts and themes.
+3. **Voice both support and critique** in a structured, constructive way.
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+When citizens can do all three freely and transparently, the decisions that emerge feel genuinely collective.
 
-### `npm run eject`
+---
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+## Tech Stack & Architecture
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+- **Frontend**: React (TypeScript), built with Vite.
+- **Styling**: Pure CSS with a custom, high-contrast "Civic Dark Mode" design system.
+- **Backend / Engine**: Node.js/Python (depending on local setup) handling vector math, semantic search, and dynamic user embeddings for project matching.
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+## Getting Started
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+### Prerequisites
+- Node.js (v18+)
+- npm or yarn
 
-## Learn More
+### Running the Frontend
+```bash
+cd app
+npm install
+npm run dev
+```
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+### Architecture Note
+Wähli is built to be a standalone frontend that syncs with a backend embedding service. It is capable of running in "demo mode," gracefully degrading to fallback clustering if the real semantic backend is unavailable.

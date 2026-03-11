@@ -2,6 +2,7 @@
   "name": "pb-recommender",
   "version": "0.1.0",
   "private": true,
+  "homepage": "https://joshuay1.github.io/pb-recommender",
   "dependencies": {
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
@@ -10,7 +11,9 @@
     "start": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "test": "vitest"
+    "test": "vitest",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build"
   },
   "eslintConfig": {
     "extends": [
@@ -33,6 +36,7 @@
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.2",
     "@vitejs/plugin-react": "^5.1.4",
+    "gh-pages": "^6.3.0",
     "jsdom": "^28.1.0",
     "vite": "^7.3.1",
     "vite-plugin-svgr": "^4.5.0",

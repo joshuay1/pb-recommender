@@ -18,7 +18,7 @@ function App() {
   const [displayLimit, setDisplayLimit] = useState<number>(Infinity);
   const [userProfile, setUserProfile] = useState<string | null>(null);
   const [onboarded, setOnboarded] = useState<boolean>(false);
-  const [onboardData, setOnboardData] = useState<{ userId?: string; text?: string; districts?: string[]; categories?: string[] }>({});
+  const [onboardData, setOnboardData] = useState<{ userId?: string; text?: string; districts?: string[]; categories?: string[]; openaiKey?: string }>({ openaiKey: localStorage.getItem('pb_openai_key') || '' });
 
   const [useRealEmbeddings, setUseRealEmbeddings] = useState(true);
   const [useGeoLocation, setUseGeoLocation] = useState(false);
@@ -149,6 +149,12 @@ function App() {
     if (cats.length > 0 || dists.length > 0) {
       const mapped = (fullProjectsData || []).map(p => ({ ...p, viewCount: (p as any).viewCount || 0, evaluationCount: (p as any).evaluationCount || 0, averageRating: (p as any).averageRating || 3.5 }));
       await recoService.initializeProfile(userId, cats, dists, mapped as any);
+    }
+    if (onboardData.openaiKey && onboardData.openaiKey.trim()) {
+      localStorage.setItem('pb_openai_key', onboardData.openaiKey.trim());
+    }
+    if (onboardData.openaiKey && onboardData.openaiKey.trim()) {
+      localStorage.setItem('pb_openai_key', onboardData.openaiKey.trim());
     }
     localStorage.setItem('pb_onboard_user', JSON.stringify({ userId, text: onboardData.text || '', categories: cats, districts: dists }));
     LocalLogger.recordEvent({ userId, type: 'onboard', payload: { text: onboardData.text || '', categories: cats, districts: dists } });
