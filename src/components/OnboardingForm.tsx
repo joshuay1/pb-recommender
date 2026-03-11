@@ -56,8 +56,8 @@ export const OnboardingForm: React.FC<OnboardingFormProps> = ({ onboardData, set
                         style={{ width: '100%', fontFamily: 'monospace' }}
                         type="password"
                     />
-                    <div style={{ fontSize: '0.85rem', color: 'var(--text-tertiary)', marginTop: '4px' }}>
-                        Your key is stored locally in your browser and sent securely only to the local backend.
+                    <div style={{ fontSize: '0.85rem', color: 'var(--text-tertiary)', marginTop: '8px' }}>
+                        Your key is never stored by us. It remains locally in your browser and is sent directly to OpenAI.
                     </div>
                 </div>
 

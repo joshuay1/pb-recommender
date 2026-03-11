@@ -298,31 +298,43 @@ function App() {
                 value={onboardData.openaiKey || ''}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => setOnboardData((prev: any) => ({ ...prev, openaiKey: e.target.value }))}
                 placeholder="sk-..."
-                style={{ width: '100%', fontFamily: 'monospace', padding: '10px', borderRadius: '6px', border: '1px solid var(--border-color)' }}
+                style={{ width: '100%', fontFamily: 'monospace', padding: '12px', borderRadius: 'var(--input-radius)', border: '1px solid var(--border-color)' }}
                 type="password"
               />
-              <div style={{ fontSize: '0.85rem', color: 'var(--text-tertiary)', marginTop: '6px' }}>
-                Required for custom AI prompts. Your key is stored locally in your browser.
+              <div style={{ fontSize: '0.85rem', color: 'var(--text-tertiary)', marginTop: '8px' }}>
+                Required for custom AI prompts. Your key is never stored by us. It remains locally in your browser and is sent directly to OpenAI.
               </div>
             </div>
-            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px' }}>
-              <button
-                onClick={() => setShowSettings(false)}
-                style={{ padding: '8px 16px', borderRadius: '6px', border: '1px solid var(--border-color)', background: 'transparent', cursor: 'pointer' }}>
-                Cancel
-              </button>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 'var(--space-md)' }}>
               <button
                 onClick={() => {
-                  if (onboardData.openaiKey && onboardData.openaiKey.trim()) {
-                    localStorage.setItem('pb_openai_key', onboardData.openaiKey.trim());
-                  } else {
-                    localStorage.removeItem('pb_openai_key');
-                  }
-                  setShowSettings(false);
+                  localStorage.removeItem('pb_onboard_user');
+                  localStorage.removeItem('pb_openai_key');
+                  window.location.reload();
                 }}
-                style={{ padding: '8px 16px', borderRadius: '6px', border: 'none', background: 'var(--primary-color)', color: 'white', cursor: 'pointer', fontWeight: 600 }}>
-                Save Key
+                style={{ padding: '10px 16px', borderRadius: 'var(--badge-radius)', border: '1px solid var(--accent-secondary)', color: 'var(--accent-secondary)', background: 'transparent', cursor: 'pointer', fontWeight: 600, fontSize: '0.9rem' }}>
+                Reset Entire Profile
               </button>
+              <div style={{ display: 'flex', gap: '8px' }}>
+                <button
+                  onClick={() => setShowSettings(false)}
+                  style={{ padding: '10px 20px', borderRadius: 'var(--badge-radius)', border: '1px solid var(--border-color)', background: 'var(--neutral-bg)', color: 'var(--text-secondary)', cursor: 'pointer', fontWeight: 600 }}>
+                  Cancel
+                </button>
+                <button
+                  onClick={() => {
+                    if (onboardData.openaiKey && onboardData.openaiKey.trim()) {
+                      localStorage.setItem('pb_openai_key', onboardData.openaiKey.trim());
+                    } else {
+                      localStorage.removeItem('pb_openai_key');
+                    }
+                    setShowSettings(false);
+                    window.location.reload();
+                  }}
+                  style={{ padding: '10px 24px', borderRadius: 'var(--badge-radius)', border: 'none', background: 'var(--text-primary)', color: 'white', cursor: 'pointer', fontWeight: 600, boxShadow: 'var(--shadow-sm)' }}>
+                  Save & Reload
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -368,7 +380,7 @@ function App() {
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Tell us what you're looking for, in your own words, and our AI will translate it into filters..."
+                placeholder={onboardData.openaiKey ? "Tell us what you're looking for, in your own words, and our AI will translate it into filters..." : "Keyword search. Add an OpenAI API key in Settings to search using AI..."}
                 style={{
                   flex: 1,
                   padding: '16px 24px',
