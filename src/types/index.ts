@@ -31,8 +31,9 @@ export interface GradedProject extends Project {
 // User action types
 export interface ShowAction {
   projectId: number;
-  action: 'more' | 'less';
+  action: 'vibe' | 'around';
   ts: number;
+  district?: string; // District info for 'around' actions
 }
 
 // Stats interface for Header component
@@ -42,13 +43,15 @@ export interface AppStats {
   diversityScore: number;
   locationWeight: number;
   themeWeight: number;
+  freshnessWeight?: number;
+  qualityWeight?: number;
   totalProjects: number;
   closestDistrict: string;
   closestTheme: string;
 }
 
 // Feedback type
-export type FeedbackType = 'more' | 'less';
+export type FeedbackType = 'vibe' | 'around';
 
 // Grade type
 export type GradeType = 'not_convinced' | 'maybe' | 'like' | 'love';

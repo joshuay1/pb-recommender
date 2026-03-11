@@ -1,296 +1,230 @@
 import React, { useState, useCallback, memo } from 'react';
 import type { FeedbackType, EvaluationType } from '../types/recommender';
 import type { RankedProject } from '../types/recommender';
+import LocalLogger from '../services/LocalLogger';
 
 interface ProjectCardProps {
   project: RankedProject;
   onFeedback: (projectId: number, feedback: FeedbackType) => void;
   onEvaluation: (projectId: number, evaluation: EvaluationType) => void;
+  negativeRatingsAvailable: number;
+  showExplanations?: boolean;
+  userId?: string | null;
 }
 
-function ProjectCard({ project, onFeedback, onEvaluation }: ProjectCardProps) {
+function ProjectCard({ project, onFeedback, onEvaluation, negativeRatingsAvailable, showExplanations = false }: ProjectCardProps) {
   const [selectedEvaluation, setSelectedEvaluation] = useState<EvaluationType | null>(null);
   const [feedbackActive, setFeedbackActive] = useState<FeedbackType | null>(null);
 
   const handleFeedback = useCallback((feedback: FeedbackType) => {
-    console.log('🎯 ProjectCard feedback:', { projectId: project.id, feedback, title: project.title });
     setFeedbackActive(feedback);
     onFeedback(project.id, feedback);
     setTimeout(() => setFeedbackActive(null), 1000);
-  }, [project.id, onFeedback, project.title]);
+  }, [project.id, onFeedback]);
 
   const handleEvaluation = useCallback((evaluation: EvaluationType) => {
-    console.log('⭐ ProjectCard evaluation:', { projectId: project.id, evaluation, title: project.title });
     setSelectedEvaluation(evaluation);
     setTimeout(() => {
       onEvaluation(project.id, evaluation);
     }, 200);
-  }, [project.id, onEvaluation, project.title]);
+  }, [project.id, onEvaluation]);
 
-  const handleMoreClick = useCallback(() => handleFeedback('more'), [handleFeedback]);
-  const handleLessClick = useCallback(() => handleFeedback('less'), [handleFeedback]);
+  const handleMoreClick = useCallback(() => handleFeedback('vibe'), [handleFeedback]);
+  const handleLessClick = useCallback(() => handleFeedback('around'), [handleFeedback]);
 
   return (
-    <div className="project-card" data-project-id={project.id} style={{
-      background: '#ffffff',
-      border: '1px solid rgba(0, 0, 0, 0.04)',
-      borderRadius: '12px',
-      padding: '24px',
-      marginBottom: '20px',
-      display: 'flex',
-      flexDirection: 'column',
-      height: '100%'
-    }}>
-      {/* TOP: Show Me More / Show Me Less - Primary Controls */}
-      <div className="primary-controls" style={{
-        display: 'flex',
-        gap: '12px',
-        marginBottom: '20px'
-      }}>
-        <button 
-          className={`primary-btn show-more ${feedbackActive === 'more' ? 'active' : ''}`}
-          onClick={handleMoreClick}
-          style={{
-            flex: 1,
-            padding: '8px 12px',
-            background: feedbackActive === 'more' ? '#8cb369' : '#f8f9fa',
-            color: feedbackActive === 'more' ? '#fff' : '#495057',
-            border: feedbackActive === 'more' ? 'none' : '1px solid #dee2e6',
-            borderRadius: '6px',
-            fontSize: '13px',
-            fontWeight: '500',
-            cursor: 'pointer',
-            transition: 'all 0.15s ease'
-          }}
-        >
-          🌱 Show Me More
-        </button>
-        
-        <button 
-          className={`primary-btn show-less ${feedbackActive === 'less' ? 'active' : ''}`}
-          onClick={handleLessClick}
-          style={{
-            flex: 1,
-            padding: '8px 12px',
-            background: feedbackActive === 'less' ? '#bc4b51' : '#f8f9fa',
-            color: feedbackActive === 'less' ? '#fff' : '#495057',
-            border: feedbackActive === 'less' ? 'none' : '1px solid #dee2e6',
-            borderRadius: '6px',
-            fontSize: '13px',
-            fontWeight: '500',
-            cursor: 'pointer',
-            transition: 'all 0.15s ease'
-          }}
-        >
-          🍂 Show Me Less
-        </button>
-      </div>
-
-      {/* PROJECT CONTENT */}
-      <div className="project-content" style={{ flex: 1 }}>
-        {/* Why am I seeing this? - Transparency */}
-        <div className="transparency-section" style={{
-          background: '#f8f9fa',
-          padding: '12px',
-          borderRadius: '6px',
-          marginBottom: '20px',
-          fontSize: '12px',
-          color: '#6c757d',
-          border: '1px solid #e9ecef'
-        }}>
-          <span style={{ fontWeight: '500', color: '#495057' }}>🔍 Why am I seeing this? </span>
-          {project.whyShowing}
+    <div className="project-card" data-project-id={project.id}>
+      <div className="project-content" style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+        <div className="project-header">
+          <h3 className="project-title">{project.title}</h3>
         </div>
 
-        {/* Title and Score */}
-        <div className="project-header" style={{ marginBottom: '16px' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '12px' }}>
-            <h3 className="project-title" style={{ 
-              margin: 0, 
-              fontSize: '22px', 
-              fontWeight: '700', 
-              color: '#0f172a',
-              flex: 1,
-              paddingRight: '16px',
-              lineHeight: '1.3',
-              letterSpacing: '-0.015em'
-            }}>
-              {project.title}
-            </h3>
-            <span className="match-score" style={{
-              background: project.scoring.confidenceLevel === 'high' ? 
-                '#8cb369' : 
-                project.scoring.confidenceLevel === 'medium' ? 
-                '#f4a259' : 
-                '#5b8e7d',
-              color: '#fff',
-              padding: '8px 12px',
-              borderRadius: '8px',
-              fontSize: '14px',
-              fontWeight: '600'
-            }}>
-              {Math.round(project.score * 100)}%
-            </span>
-          </div>
-
-          {/* Project Meta */}
-          <div className="project-meta" style={{
-            display: 'flex',
-            gap: '8px',
-            flexWrap: 'wrap'
-          }}>
-            <span className="district-badge" style={{
-              background: '#e8f0e1',
-              color: '#1c2613',
-              padding: '6px 12px',
-              borderRadius: '8px',
-              fontSize: '13px',
-              fontWeight: '600',
-              border: '1px solid #8cb369'
-            }}>📍 {project.district}</span>
-            
-            <span className="category-badge" style={{
-              background: '#ddeae5',
-              color: '#121d19',
-              padding: '6px 12px',
-              borderRadius: '8px',
-              fontSize: '13px',
-              fontWeight: '600',
-              border: '1px solid #5b8e7d'
-            }}>🏷️ {project.category}</span>
-            
-            <span className="budget-badge" style={{
-              background: '#fdecdd',
-              color: '#3e1f04',
-              padding: '6px 12px',
-              borderRadius: '8px',
-              fontSize: '13px',
-              fontWeight: '600',
-              border: '1px solid #f4a259'
-            }}>💰 {project.budget}</span>
-          </div>
+        <div className="project-meta">
+          <span className="district-badge">{project.district}</span>
+          <span className="category-badge">{project.category}</span>
+          {project.budget && (
+            <span className="project-budget">💰 {project.budget}</span>
+          )}
         </div>
 
-        {/* Description */}
-        <div className="project-description" style={{
-          marginBottom: '20px',
-          lineHeight: '1.6',
-          color: '#475569',
-          fontSize: '15px',
-          fontWeight: '400'
-        }}>
+        <div className="project-description">
           {project.description}
         </div>
 
-        {/* Advanced Scoring Breakdown (Debug Mode) */}
-        {project.scoring && (
-          <div className="advanced-scoring" style={{
-            background: '#f8fafc',
-            padding: '12px',
-            borderRadius: '4px',
-            marginBottom: '16px',
-            fontSize: '11px',
-            fontFamily: 'ui-monospace, monospace',
-            color: '#64748b',
-            border: '1px solid #e2e8f0'
-          }}>
-            🎯 Theme:{Math.round(project.scoring.themeScore * 100)}% | 
-            📍 Geo:{Math.round(project.scoring.geoScore * 100)}% | 
-            ⭐ Pop:{Math.round(project.scoring.popularityScore * 100)}% | 
-            ⚖️ Fair:{Math.round(project.scoring.fairnessScore * 100)}% | 
-            🎲 Explore:{Math.round(project.scoring.explorationBonus * 100)}%
-            <br/>
-            🧠 Confidence: {project.scoring.confidenceLevel} | Primary: {project.scoring.primaryReason}
-          </div>
-        )}
-
-        {/* Community Stats */}
-        <div className="community-stats" style={{
-          display: 'flex',
-          gap: '16px',
-          marginBottom: '20px',
-          fontSize: '13px',
-          color: '#64748b'
-        }}>
-          <span>👀 {project.viewCount} views</span>
-          <span>⭐ {project.evaluationCount} evaluations</span>
-          <span>📊 {project.averageRating.toFixed(1)}/5.0 rating</span>
+        {/* ALWAYS SHOW TOP REASON */}
+        <div style={{ margin: '0 24px 16px', fontSize: '0.9rem', color: 'var(--text-secondary)' }}>
+          💡 {(() => {
+            const reason = project.scoring?.primaryReason;
+            const fairness = project.scoring?.fairnessScore;
+            if (reason === 'rating_equity' || (fairness && fairness > 0.7) || project.evaluationCount < 3) return `Needs more ratings — ${project.evaluationCount} so far.`;
+            if (reason === 'content_match') return 'Matches your interests.';
+            if (reason === 'location_preference') return 'Close to your preferred area.';
+            if (reason) return reason.replace(/[__]/g, ' ');
+            return project.whyShowing || 'Recommended for you';
+          })()}
         </div>
       </div>
 
-      {/* BOTTOM: Evaluations - Secondary Controls */}
-      <div className="evaluation-section" style={{
-        borderTop: '2px solid #8cb369',
-        paddingTop: '20px',
-        marginTop: 'auto'
+      {/* FOOTER ACTIONS */}
+      <div style={{
+        padding: '16px 24px',
+        background: 'var(--surface-color)',
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '16px',
+        borderTop: '1px solid var(--border-color)'
       }}>
-        <div className="evaluation-label" style={{
-          fontSize: '16px',
-          fontWeight: '700',
-          marginBottom: '16px',
-          color: '#1c2613',
-          textAlign: 'center'
+        {/* ROW 1: Compact Grading Buttons */}
+        <div style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          gap: '8px',
+          paddingBottom: '16px',
+          borderBottom: '1px solid var(--border-color)'
         }}>
-          Rate this project:
-        </div>
-        
-        <div className="rating-spectrum-container" style={{ position: 'relative' }}>
-          {/* Spectrum line background */}
-          <div style={{
-            position: 'absolute',
-            top: '50%',
-            left: '8px',
-            right: '8px',
-            height: '2px',
-            background: 'linear-gradient(to right, #bc4b51, #6b7280, #f4a259, #8cb369)',
-            borderRadius: '1px',
-            zIndex: 0,
-            transform: 'translateY(-50%)'
-          }}></div>
-          
-          <div className="evaluation-options" style={{
-            display: 'flex',
-            gap: '2px',
-            position: 'relative',
-            zIndex: 1
-          }}>
           {([
-            { key: 'not_convinced', label: 'Not for me', bgColor: '#fdf2f2', activeColor: '#bc4b51', borderColor: '#e8b4b8', textColor: '#7c2d12' },
-            { key: 'maybe', label: 'Neutral', bgColor: '#f7f3f0', activeColor: '#5b8e7d', borderColor: '#c2d5ce', textColor: '#2c5f50' },
-            { key: 'like', label: 'Like it', bgColor: '#fef8ec', activeColor: '#f4a259', borderColor: '#f9d5a7', textColor: '#92400e' },
-            { key: 'love', label: 'Love it', bgColor: '#f0f7ed', activeColor: '#8cb369', borderColor: '#bdd9a7', textColor: '#365314' }
-          ] as const).map(({ key, label, bgColor, activeColor, borderColor, textColor }, index) => (
+            { key: 'not_convinced', label: 'Terrible', score: -1, requiresPower: true },
+            { key: 'maybe', label: 'Neutral', score: 0, requiresPower: false },
+            { key: 'like', label: 'Good', score: 1, requiresPower: false },
+            { key: 'love', label: 'Love it', score: 2, requiresPower: false }
+          ] as const).map(({ key, label, score, requiresPower }) => {
+            const isDisabled = requiresPower && negativeRatingsAvailable <= 0;
+            const isSelected = selectedEvaluation === key;
+
+            let gradeClass = '';
+            if (key === 'not_convinced') gradeClass = 'grade-not';
+            if (key === 'maybe') gradeClass = 'grade-maybe';
+            if (key === 'like') gradeClass = 'grade-like';
+            if (key === 'love') gradeClass = 'grade-love';
+
+            return (
+              <button
+                key={key}
+                className={`grade-btn ${gradeClass} ${isSelected ? 'selected' : ''}`}
+                onClick={() => !isDisabled && handleEvaluation(key)}
+                disabled={isDisabled}
+                style={{
+                  flex: 1,
+                  position: 'relative',
+                  opacity: isDisabled ? 0.6 : 1,
+                  boxShadow: isSelected ? 'none' : 'var(--shadow-sm)',
+                  padding: '8px 4px',
+                  borderRadius: '12px',
+                  fontWeight: 700,
+                  fontSize: '0.85rem'
+                }}
+                title={isDisabled ? 'Need more positive ratings to unlock reject power' : ''}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px' }}>
+                  <span className="score-badge">{score}</span>
+                  {label}
+                  {requiresPower && isDisabled && (
+                    <span style={{ fontSize: '0.8rem' }}>🔒</span>
+                  )}
+                </div>
+              </button>
+            );
+          })}
+        </div>
+
+        {/* ROW 2: Context actions and info */}
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <div style={{ display: 'flex', gap: '16px', fontSize: '0.9rem', fontWeight: '500', color: 'var(--text-tertiary)' }}>
+            <span>👀 {project.viewCount} views</span>
+            <span>⭐ {project.evaluationCount} ratings</span>
+          </div>
+
+          <div style={{ display: 'flex', gap: '8px' }}>
             <button
-              key={key}
-              className={`evaluation-btn ${selectedEvaluation === key ? 'selected' : ''}`}
-              onClick={() => handleEvaluation(key)}
+              className={`cart-action-btn ${feedbackActive === 'vibe' ? 'active' : ''}`}
+              onClick={handleMoreClick}
+              aria-label="More this vibe"
               style={{
-                flex: 1,
-                padding: '14px 8px',
-                background: selectedEvaluation === key ? activeColor : bgColor,
-                color: selectedEvaluation === key ? '#fff' : textColor,
-                border: selectedEvaluation === key ? `2px solid ${activeColor}` : `2px solid ${borderColor}`,
-                borderRadius: index === 0 ? '8px 4px 4px 8px' : 
-                            index === 3 ? '4px 8px 8px 4px' : 
-                            '4px',
-                fontSize: '13px',
-                fontWeight: selectedEvaluation === key ? '700' : '600',
+                background: feedbackActive === 'vibe' ? 'var(--accent-tertiary)' : 'var(--surface-color)',
+                color: feedbackActive === 'vibe' ? '#fff' : 'var(--text-primary)',
+                border: feedbackActive === 'vibe' ? '1px solid var(--accent-tertiary)' : '1px solid var(--border-color)',
+                borderRadius: 'var(--button-radius)',
+                padding: '8px 16px',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '6px',
                 cursor: 'pointer',
-                transition: 'all 0.2s ease',
-                minWidth: 0,
-                textAlign: 'center',
-                position: 'relative',
+                transition: 'all 0.2s',
+                fontWeight: 600,
+                fontSize: '0.85rem',
+                boxShadow: feedbackActive === 'vibe' ? '0 4px 12px rgba(91, 142, 125, 0.25)' : 'var(--shadow-sm)'
               }}
-            >
-              {label}
-            </button>
-          ))}
+            >🌱 More this vibe</button>
+            <button
+              className={`cart-action-btn ${feedbackActive === 'around' ? 'active' : ''}`}
+              onClick={handleLessClick}
+              aria-label="More around here"
+              style={{
+                background: feedbackActive === 'around' ? 'var(--accent-warm)' : 'var(--surface-color)',
+                color: feedbackActive === 'around' ? '#fff' : 'var(--text-primary)',
+                border: feedbackActive === 'around' ? '1px solid var(--accent-warm)' : '1px solid var(--border-color)',
+                borderRadius: 'var(--button-radius)',
+                padding: '8px 16px',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '6px',
+                cursor: 'pointer',
+                transition: 'all 0.2s',
+                fontWeight: 600,
+                fontSize: '0.85rem',
+                boxShadow: feedbackActive === 'around' ? '0 4px 12px rgba(244, 162, 89, 0.25)' : 'var(--shadow-sm)'
+              }}
+            >📍 More around here</button>
           </div>
         </div>
       </div>
+
+      {/* EXPLANATIONS (Only visible if enabled globally via Header) */}
+      {showExplanations && project.scoring && (
+        <div style={{ background: 'var(--neutral-bg)', borderTop: '1px solid var(--border-color)' }}>
+          <div style={{ padding: '16px 24px' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+              <div style={{ fontWeight: 600, color: 'var(--text-secondary)', fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                Score Breakdown
+              </div>
+              <div style={{ fontWeight: 800, color: 'var(--accent-secondary)', fontSize: '1rem', fontFamily: 'Outfit, sans-serif' }}>
+                {Math.round((project.score ?? 0) * 100)}% Match
+              </div>
+            </div>
+            <div style={{
+              fontSize: '0.85rem',
+              color: 'var(--text-primary)',
+              display: 'grid',
+              gridTemplateColumns: '1fr 1fr',
+              gap: '12px',
+              background: 'var(--surface-color)',
+              padding: '16px',
+              borderRadius: '8px',
+              border: '1px solid var(--border-color)',
+              fontWeight: 500
+            }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                <span style={{ color: 'var(--text-secondary)' }}>Theme:</span>
+                <span style={{ fontWeight: 700, fontFamily: 'ui-monospace, monospace' }}>{Math.round(project.scoring.themeScore * 100)}%</span>
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                <span style={{ color: 'var(--text-secondary)' }}>Location:</span>
+                <span style={{ fontWeight: 700, fontFamily: 'ui-monospace, monospace' }}>{Math.round(project.scoring.geoScore * 100)}%</span>
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                <span style={{ color: 'var(--text-secondary)' }}>Popularity:</span>
+                <span style={{ fontWeight: 700, fontFamily: 'ui-monospace, monospace' }}>{Math.round(project.scoring.popularityScore * 100)}%</span>
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                <span style={{ color: 'var(--text-secondary)' }}>Novelty:</span>
+                <span style={{ fontWeight: 700, fontFamily: 'ui-monospace, monospace' }}>{Math.round(project.scoring.explorationBonus * 100)}%</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
 
-// Memoize the component to prevent unnecessary re-renders
 export default memo(ProjectCard);

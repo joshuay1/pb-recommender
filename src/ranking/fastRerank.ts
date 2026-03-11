@@ -1,6 +1,6 @@
-import { RANK_CFG } from './config.ts';
-import { cosSim } from './geometry.ts';
-import type { Project } from './userVector.ts';
+import { RANK_CFG } from './config';
+import { cosSim } from './geometry';
+import type { Project } from './userVector';
 
 // Optimized version of reranking with performance improvements
 export function fastRerankTopWindow(

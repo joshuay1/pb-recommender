@@ -1,6 +1,6 @@
-import { RANK_CFG } from './config.ts';
-import { cosSim } from './geometry.ts';
-import type { Project } from './userVector.ts';
+import { RANK_CFG } from './config';
+import { cosSim } from './geometry';
+import type { Project } from './userVector';
 
 function getFacets(projects: Project[], facet: keyof typeof RANK_CFG.floor): Set<string> {
   return new Set(projects.map(p => String(p[facet])));

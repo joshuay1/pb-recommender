@@ -1,7 +1,7 @@
 // Advanced Recommender System Types
 
 export type EvaluationType = 'love' | 'like' | 'maybe' | 'not_convinced';
-export type FeedbackType = 'more' | 'less';
+export type FeedbackType = 'vibe' | 'around';
 
 // Geographic types
 export interface GeoLocation {
@@ -53,6 +53,9 @@ export interface UserProfile {
   // Metadata
   createdAt: number;
   lastActive: number;
+  // Click-count tracking for click-based decay
+  globalActionCount?: number;
+  lastActionCount?: number;
 }
 
 // User events for learning
@@ -167,8 +170,8 @@ export interface RecoConfig {
   
   // Feedback strength
   feedbackStrength: {
-    more: number;
-    less: number;
+  vibe: number;
+  around: number;
     love: number;
     like: number;
     maybe: number;
