@@ -61,16 +61,6 @@ export const OnboardingForm: React.FC<OnboardingFormProps> = ({ onboardData, set
                     </div>
                 </div>
 
-                <div style={{ marginBottom: 'var(--space-md)' }}>
-                    <label style={{ display: 'block', marginBottom: '8px', fontWeight: 600, color: 'var(--text-primary)' }}>Participant ID (optional)</label>
-                    <input
-                        value={onboardData.userId || ''}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => setOnboardData((prev: any) => ({ ...prev, userId: e.target.value }))}
-                        placeholder="Leave blank for auto-generated ID"
-                        style={{ width: '100%' }}
-                        type="text"
-                    />
-                </div>
 
                 <div style={{ marginBottom: 'var(--space-lg)' }}>
                     <label style={{ display: 'block', marginBottom: '8px', fontWeight: 600, color: 'var(--text-primary)' }}>

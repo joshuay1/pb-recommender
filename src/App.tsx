@@ -56,7 +56,10 @@ function App() {
       if (!fullProjectsData && !isLoadingFullDataset) {
         setIsLoadingFullDataset(true);
         try {
-          const fetchPath = projectsFile.startsWith('/') ? projectsFile : `/${projectsFile}`;
+          const base = import.meta.env.BASE_URL || '/';
+          const cleanBase = base.endsWith('/') ? base : base + '/';
+          const cleanFile = projectsFile.startsWith('/') ? projectsFile.substring(1) : projectsFile;
+          const fetchPath = cleanBase + cleanFile;
           const response = await fetch(fetchPath);
           if (response.ok) {
             const data = await response.json();
