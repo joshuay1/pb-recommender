@@ -26,6 +26,7 @@ function App() {
   const [fullProjectsData, setFullProjectsData] = useState<Project[] | null>(null);
   const [isLoadingFullDataset, setIsLoadingFullDataset] = useState(false);
   const [filtersCollapsed, setFiltersCollapsed] = useState<boolean>(false);
+  const [showSettings, setShowSettings] = useState<boolean>(false);
 
   useEffect(() => {
     try {
@@ -278,8 +279,58 @@ function App() {
   return (
     <div className="main-layout">
       {!onboarded && <OnboardingForm onboardData={onboardData} setOnboardData={setOnboardData} handleOnboardSubmit={handleOnboardSubmit} availableCategories={availableCategories} availableDistricts={availableDistricts} />}
+
+      {showSettings && (
+        <div style={{
+          position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
+          backgroundColor: 'rgba(0, 0, 0, 0.5)', zIndex: 1000,
+          display: 'flex', alignItems: 'center', justifyContent: 'center'
+        }}>
+          <div style={{
+            background: 'var(--surface-color)', padding: 'var(--space-xl)',
+            borderRadius: 'var(--card-radius)', width: '90%', maxWidth: '500px',
+            boxShadow: 'var(--shadow-lg)'
+          }}>
+            <h2 style={{ marginTop: 0, marginBottom: 'var(--space-md)', color: 'var(--text-primary)' }}>Settings</h2>
+            <div style={{ marginBottom: 'var(--space-md)' }}>
+              <label style={{ display: 'block', marginBottom: '8px', fontWeight: 600, color: 'var(--text-primary)' }}>OpenAI API Key</label>
+              <input
+                value={onboardData.openaiKey || ''}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setOnboardData((prev: any) => ({ ...prev, openaiKey: e.target.value }))}
+                placeholder="sk-..."
+                style={{ width: '100%', fontFamily: 'monospace', padding: '10px', borderRadius: '6px', border: '1px solid var(--border-color)' }}
+                type="password"
+              />
+              <div style={{ fontSize: '0.85rem', color: 'var(--text-tertiary)', marginTop: '6px' }}>
+                Required for custom AI prompts. Your key is stored locally in your browser.
+              </div>
+            </div>
+            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px' }}>
+              <button
+                onClick={() => setShowSettings(false)}
+                style={{ padding: '8px 16px', borderRadius: '6px', border: '1px solid var(--border-color)', background: 'transparent', cursor: 'pointer' }}>
+                Cancel
+              </button>
+              <button
+                onClick={() => {
+                  if (onboardData.openaiKey && onboardData.openaiKey.trim()) {
+                    localStorage.setItem('pb_openai_key', onboardData.openaiKey.trim());
+                  } else {
+                    localStorage.removeItem('pb_openai_key');
+                  }
+                  setShowSettings(false);
+                }}
+                style={{ padding: '8px 16px', borderRadius: '6px', border: 'none', background: 'var(--primary-color)', color: 'white', cursor: 'pointer', fontWeight: 600 }}>
+                Save Key
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className="left-content">
         <Header
+          onOpenSettings={() => setShowSettings(true)}
           stats={stats}
           useRealEmbeddings={useRealEmbeddings}
           onToggleEmbeddings={setUseRealEmbeddings}

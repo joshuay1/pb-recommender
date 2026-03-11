@@ -18,9 +18,10 @@ interface HeaderProps {
   weights?: { content: number; location: number; freshness: number; quality: number };
   onChangeWeights?: (w: { content: number; location: number; freshness: number; quality: number }) => void;
   onResetWeights?: () => void;
+  onOpenSettings?: () => void;
 }
 
-function Header({ stats, useRealEmbeddings, onToggleEmbeddings, isLoadingDataset, fullDatasetCount, useGeoLocation, onToggleLocationMode, showExplanations, onToggleExplanations, manualTuningEnabled = false, onToggleManualTuning, weights, onChangeWeights, onResetWeights }: HeaderProps) {
+function Header({ stats, useRealEmbeddings, onToggleEmbeddings, isLoadingDataset, fullDatasetCount, useGeoLocation, onToggleLocationMode, showExplanations, onToggleExplanations, manualTuningEnabled = false, onToggleManualTuning, weights, onChangeWeights, onResetWeights, onOpenSettings }: HeaderProps) {
   const [showTechnicalDetails, setShowTechnicalDetails] = useState(false);
 
   const safe = (v: any, fallback = '—'): string => (v === null || v === undefined ? String(fallback) : String(v));
@@ -45,12 +46,20 @@ function Header({ stats, useRealEmbeddings, onToggleEmbeddings, isLoadingDataset
 
   return (
     <header className="header" style={{ paddingBottom: '8px' }}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
-
-        <div className="brand-wrap" style={{ display: 'flex', flexDirection: 'row', alignItems: 'baseline', gap: 12 }}>
-          <div className="brand-title">Wähli</div>
-          <div className="brand-subtitle" style={{ marginTop: 0, fontSize: '0.8rem', letterSpacing: '0.12em', textTransform: 'uppercase', color: 'var(--text-tertiary)', fontWeight: 600, fontFamily: 'Outfit, sans-serif' }}>civic majority judgement ai platform</div>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+          <div className="brand-wrap" style={{ display: 'flex', flexDirection: 'row', alignItems: 'baseline', gap: 12 }}>
+            <div className="brand-title">Wähli</div>
+            <div className="brand-subtitle" style={{ marginTop: 0, fontSize: '0.8rem', letterSpacing: '0.12em', textTransform: 'uppercase', color: 'var(--text-tertiary)', fontWeight: 600, fontFamily: 'Outfit, sans-serif' }}>civic majority judgement ai platform</div>
+          </div>
         </div>
+        <button
+          onClick={onOpenSettings}
+          style={{ background: '#fff', border: '1px solid var(--border-color)', borderRadius: '6px', padding: '6px 10px', fontSize: '0.85rem', cursor: 'pointer', color: 'var(--text-secondary)', display: 'flex', alignItems: 'center', gap: '6px', boxShadow: 'var(--shadow-sm)', fontWeight: 500 }}
+          title="Settings"
+        >
+          ⚙️ Settings
+        </button>
       </div>
 
       {/* subtle gradient stripe under the header title */}
