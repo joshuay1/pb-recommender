@@ -358,38 +358,14 @@ function App() {
           onChangeWeights={handleChangeManualWeights}
           onResetWeights={handleResetManualWeights}
         />
-        <div className="sticky-top-bar" style={{
-          position: 'sticky',
-          top: 'var(--space-md)',
-          zIndex: 100,
-          background: 'rgba(255, 255, 255, 0.9)',
-          backdropFilter: 'blur(16px)',
-          WebkitBackdropFilter: 'blur(16px)',
-          padding: '24px',
-          borderRadius: 'var(--card-radius)',
-          boxShadow: '0 16px 40px rgba(45,49,66,0.06)',
-          border: '1px solid var(--border-color)',
-          marginBottom: 'var(--space-xl)',
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '24px'
-        }}>
-          <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
-            <form onSubmit={handleSearchSubmit} style={{ display: 'flex', gap: '12px', alignItems: 'center', flex: 1 }}>
+        <div className="sticky-top-bar">
+          <div style={{ display: 'flex', gap: '12px', alignItems: 'center', width: '100%', flexWrap: 'wrap' }}>
+            <form onSubmit={handleSearchSubmit} style={{ display: 'flex', gap: '12px', alignItems: 'stretch', flex: 1, minWidth: '280px' }}>
               <input
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder={onboardData.openaiKey ? "Tell us what you're looking for, in your own words, and our AI will translate it into filters..." : "Keyword search. Add an OpenAI API key in Settings to search using AI..."}
-                style={{
-                  flex: 1,
-                  padding: '16px 24px',
-                  fontSize: '1.1rem',
-                  background: 'var(--surface-color)',
-                  border: '1px solid var(--border-color)',
-                  borderRadius: 'var(--input-radius)',
-                  boxShadow: 'none'
-                }}
               />
               <button
                 type="submit"
@@ -404,50 +380,53 @@ function App() {
                   border: 'none',
                   cursor: 'pointer',
                   transition: 'all 0.2s',
+                  whiteSpace: 'nowrap'
                 }}
               >
                 Search
               </button>
             </form>
-            <button
-              type="button"
-              onClick={() => setFiltersCollapsed(c => !c)}
-              aria-label={filtersCollapsed ? 'Expand filters' : 'Collapse filters'}
-              style={{
-                border: '1px solid var(--border-color)',
-                background: 'var(--surface-color)',
-                padding: '16px 24px',
-                borderRadius: 'var(--input-radius)',
-                fontSize: '1.1rem',
-                fontWeight: 700,
-                fontFamily: 'Outfit, sans-serif',
-                color: 'var(--text-primary)',
-                cursor: 'pointer',
-                whiteSpace: 'nowrap'
-              }}
-            >
-              {filtersCollapsed ? '▸ Filters' : '▾ Filters'}
-            </button>
-            {(selectedDistricts.length > 0 || selectedCategories.length > 0) && (
+            <div style={{ display: 'flex', gap: '12px' }}>
               <button
                 type="button"
-                onClick={() => { setSelectedDistricts([]); setSelectedCategories([]); }}
+                onClick={() => setFiltersCollapsed(c => !c)}
+                aria-label={filtersCollapsed ? 'Expand filters' : 'Collapse filters'}
                 style={{
-                  background: 'var(--accent-secondary)',
-                  color: 'white',
-                  border: 'none',
+                  border: '1px solid var(--border-color)',
+                  background: 'var(--surface-color)',
                   padding: '16px 24px',
                   borderRadius: 'var(--input-radius)',
                   fontSize: '1.1rem',
-                  fontWeight: '700',
+                  fontWeight: 700,
                   fontFamily: 'Outfit, sans-serif',
+                  color: 'var(--text-primary)',
                   cursor: 'pointer',
                   whiteSpace: 'nowrap'
                 }}
               >
-                Clear Filters
+                {filtersCollapsed ? '▸ Filters' : '▾ Filters'}
               </button>
-            )}
+              {(selectedDistricts.length > 0 || selectedCategories.length > 0) && (
+                <button
+                  type="button"
+                  onClick={() => { setSelectedDistricts([]); setSelectedCategories([]); }}
+                  style={{
+                    background: 'var(--accent-secondary)',
+                    color: 'white',
+                    border: 'none',
+                    padding: '16px 24px',
+                    borderRadius: 'var(--input-radius)',
+                    fontSize: '1.1rem',
+                    fontWeight: 700,
+                    fontFamily: 'Outfit, sans-serif',
+                    cursor: 'pointer',
+                    whiteSpace: 'nowrap'
+                  }}
+                >
+                  Clear Filters
+                </button>
+              )}
+            </div>
             {promptExplain && (
               <button
                 type="button"

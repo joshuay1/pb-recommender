@@ -116,8 +116,8 @@ function Header({ stats, useRealEmbeddings, onToggleEmbeddings, isLoadingDataset
         </div>
       </div>
 
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '12px' }}>
-        <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '12px', flexWrap: 'wrap' }}>
+        <div style={{ display: 'flex', gap: '12px', alignItems: 'center', flexWrap: 'wrap' }}>
           <div style={{ fontSize: '13px', color: '#64748b', fontWeight: '600' }}>Algorithm</div>
           <div style={{ fontSize: '13px', color: '#64748b' }}>Content</div>
           <div style={{ fontSize: '13px', fontWeight: 800 }}>{normDisplay.t}%</div>
@@ -130,7 +130,7 @@ function Header({ stats, useRealEmbeddings, onToggleEmbeddings, isLoadingDataset
           {/* Discovery moved to technical details to avoid confusion in the main header */}
         </div>
 
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap' }}>
           {/* embedding & location mode toggles removed (obsolete) */}
 
           {/* Manual tuning toggle */}
